@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 
-settings.ini
-credentials.json
-token.json
-pizza-tg-bot-be9f47d83502.json
+*.json
+*.ini
+!settings-template.ini
