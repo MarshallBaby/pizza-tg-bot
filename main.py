@@ -54,6 +54,9 @@ else:
 global fields_amount
 fields_amount = int(config['Table']['fields_amount'])
 
+def text_checker(message):
+    return message.text.find('#')
+    
 
 def bsm(message, value):
     bot.send_message(message.chat.id, value)
@@ -158,26 +161,29 @@ def new_reaction(message):
 
 @bot.message_handler(content_types=['text'])
 def text_reaction(message):
-    global fields_amount
-    is_registered(message)
-    if(current_field_get(message) == -1):
-        bot.send_message(
-            message.chat.id, config['Bot']['text_no_func_reaction'])
-    else:
-        data_array = data_array_get(message)
-        data_array[current_field_get(message)] = message.text
-        data_array_upload(message, data_array)
-        current_field_increment(message)
-        if(current_field_get(message) >= fields_amount):
-            array_send(message)
-            connection.commit()
-            sql = "DELETE FROM `registered_users` WHERE `chat_id` = " + \
-                str(message.chat.id)
-            cursor.execute(sql)
-            connection.commit()
-            is_registered(message)
+    if (text_checker(message) == -1):
+        global fields_amount
+        is_registered(message)
+        if(current_field_get(message) == -1):
+            bot.send_message(
+                message.chat.id, config['Bot']['text_no_func_reaction'])
         else:
-            bsm(message, "Введите значение " + str(current_field_get(message) + 1))
+            data_array = data_array_get(message)
+            data_array[current_field_get(message)] = message.text
+            data_array_upload(message, data_array)
+            current_field_increment(message)
+            if(current_field_get(message) >= fields_amount):
+                array_send(message)
+                connection.commit()
+                sql = "DELETE FROM `registered_users` WHERE `chat_id` = " + \
+                    str(message.chat.id)
+                cursor.execute(sql)
+                connection.commit()
+                is_registered(message)
+            else:
+                bsm(message, "Введите значение " + str(current_field_get(message) + 1))
+    else:
+        bsm(message, "Исопльзование символа '#' запрещено" )
 
 
 def array_send(message):
