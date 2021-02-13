@@ -129,6 +129,16 @@ def data_array_upload(message, data_array):
     print(sql)
     cursor.execute(sql)
     connection.commit()
+    
+def date_validator(message):
+    text = message.text
+    if(len(text) != 10):
+        return False
+    for i in range(9):
+        if(((ord(text[i]) > 46 and ord(text[i]) < 58) or ((i == 2 or i == 5) and (ord(text[i]) == 46 ))) != True):
+            pprint(text[i])
+            return False
+    return True
 
 
 @bot.message_handler(commands=['help'])
